@@ -1,0 +1,17 @@
+{
+  "name": "youtube-twitter-backend",
+  "version": "1.0.0",
+  "description": "Server-side codebase: YouTube and Twitter integration service (MongoDB, Express.js, Node.js).",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+  },
+  "author": "Gobinda Das",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.4",
+    "express": "^4.18.2",
+    "mongoose": "^8.1.3"
+  }
+}
