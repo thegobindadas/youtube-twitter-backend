@@ -193,12 +193,11 @@ const logoutUser = asyncHandler (async (req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
 
-    const incomingRefreshToken = req.cookie?.refreshToken || req.body.refreshToken
+    const incomingRefreshToken = req.cookies?.refreshToken || req.body.refreshToken
 
     if (!incomingRefreshToken) {
         throw new ApiError(401, "unauthorized request")
     }
-
 
     try {
 
@@ -206,7 +205,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             incomingRefreshToken, 
             process.env.REFRESH_TOKEN_SECRET
         )
-        
+   
        
         const user = await User.findById(decodeToken?._id)
 
@@ -220,7 +219,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         }
 
 
-        const { newAccessToken, newRefreshToken } = await generateAccessAndRefreshToken(user._id)
+        const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id)
 
 
         const options = {
@@ -228,17 +227,17 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             secure: true
         }
 
-        
+
         return res
         .status(200)
-        .cookie("accessToken", newAccessToken, options)
-        .cookie("refreshToken", newRefreshToken, options)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
         .json(
             new ApiResponse(
                 200,
             {
-                accessToken: newAccessToken,
-                refreshToken: newRefreshToken
+                accessToken,
+                refreshToken
             },
             "Access token refreshed"
             )
