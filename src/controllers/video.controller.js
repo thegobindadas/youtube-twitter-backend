@@ -36,9 +36,9 @@ const publishAVideo = asyncHandler(async (req, res) => {
     }
 
 
-    const thumbnailFile = await uploadOnCloudinary(thumbnailLocalPath)
+    const thumbnail = await uploadOnCloudinary(thumbnailLocalPath)
 
-    if (!thumbnailFile.url) {
+    if (!thumbnail.url) {
         throw new ApiError(400, "Error while uploading on thumbnail")
     }
 
@@ -47,7 +47,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
         title,
         videoFile: videoFile.url,
         duration: videoFile.duration,
-        thumbnail: thumbnailFile.url,
+        thumbnail: thumbnail.url,
         description,
         owner: req.user._id
     })
