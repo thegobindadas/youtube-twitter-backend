@@ -98,6 +98,65 @@ const getVideoById = asyncHandler(async (req, res) => {
 
 
 
+const updateVideo = asyncHandler(async (req, res) => {
+
+    const { videoId } = req.params
+    const { title, description } = req.body;
+    const  thumbnailLocalPath  = req.file?.path
+
+
+    if (!videoId) {
+        throw new ApiError(400, "video id is required!")
+    }
+
+
+    try {
+
+        const video = await Video.findById({
+            _id: videoId
+        })
+    
+        if (!video) {
+            throw new ApiError(404, "video does not found")
+        }
+    
+
+        if (video.owner.toString() !== req.user._id.toString()) {
+            throw new ApiError(403, "Unauthorized to update this video")
+        }
+
+    
+        if (title) {
+            video.title = title;
+        }
+    
+        if (description) {
+            video.description = description;
+        }
+    
+        if (thumbnailLocalPath) {
+            const thumbnail = await uploadOnCloudinary(thumbnailLocalPath)
+            video.thumbnail = thumbnail.url;
+        }
+    
+        await video.save({ validateBeforeSave: false });
+        
+    
+        return res.status(200).json(
+            new ApiResponse(
+                200, 
+                video, 
+                "Video updated successfully"
+            )
+        )
+
+    } catch (error) {
+        throw new ApiError(500, error.message || "Internal server error")
+    }
+
+})
+
+
 
 
 
@@ -105,5 +164,6 @@ const getVideoById = asyncHandler(async (req, res) => {
 export {
     publishAVideo,
     getVideoById,
+    updateVideo,
     
 }
