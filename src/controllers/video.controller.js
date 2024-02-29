@@ -181,7 +181,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
     }
 
 
-    await video.remove();
+    await video.deleteOne();
 
 
     return res.status(200).json(
