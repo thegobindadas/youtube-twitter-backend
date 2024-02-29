@@ -2,6 +2,7 @@ import { Router } from "express";
 import {     
     publishAVideo,
     getVideoById,
+    updateVideo,
     
 } from "../controllers/video.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -36,7 +37,7 @@ router
 router
     .route("/:videoId")
     .get(getVideoById)
-
+    .patch(upload.single("thumbnail"), updateVideo);
 
 
 
