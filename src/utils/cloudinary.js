@@ -67,10 +67,39 @@ const deletePhotoOnCloudinary = async (cloudinaryFilePathUrl) => {
 
 
 
+const deleteVideoOnCloudinary = async (cloudinaryFilePathUrl) => {
+    
+    try {
+        
+        if (!cloudinaryFilePathUrl) return null
+
+
+        const parts = cloudinaryFilePathUrl.split('/');
+        const fileName = parts[parts.length - 1].split('.')[0];
+        //console.log(fileName);
+
+
+        const result = await cloudinary.uploader.destroy(fileName.toString(), {
+            resource_type: "video",
+            //type: 'authenticated'
+        });
+
+        //console.log(result)
+
+
+        return result;
+
+    } catch (error) {
+        return null
+    }
+};
+
+
+
 
 
 export { 
     uploadOnCloudinary,
     deletePhotoOnCloudinary,
-    
+    deleteVideoOnCloudinary
 }
