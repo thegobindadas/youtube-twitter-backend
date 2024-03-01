@@ -38,9 +38,39 @@ const createTweet = asyncHandler(async (req, res) => {
 
 
 
+const getUserTweets = asyncHandler(async (req, res) => {
+
+    const { userId } = req.params;
+
+    if (!userId) {
+        throw new ApiError(401, "User not logged in")
+    }
+
+
+    const userTweets = await Tweet.find({ owner: userId }).sort({ createdAt: -1 });
+    
+
+    if (!userTweets) {
+        throw new ApiError(401, "No tweets found for the user")
+    }
+
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            userTweets,
+            "Get user tweets"
+        )
+    )
+
+})
+
+
+
 
 
 export {
     createTweet,
+    getUserTweets,
     
 }
