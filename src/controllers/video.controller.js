@@ -3,7 +3,7 @@ import { Video } from "../models/video.model.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js"
+import { uploadOnCloudinary, deletePhotoOnCloudinary, deleteVideoOnCloudinary } from "../utils/cloudinary.js"
 
 
 
@@ -180,12 +180,27 @@ const deleteVideo = asyncHandler(async (req, res) => {
         throw new ApiError(403, "Unauthorized to delete this video")
     }
 
-
+   
     await video.deleteOne();
 
 
+    const deleteThumbnailOnCloudinary = await deletePhotoOnCloudinary(video.thumbnail)
+
+    if (!deleteThumbnailOnCloudinary) {
+        throw new ApiError(500, "Error while deleting thumbnail from Cloudinary")
+    }
+
+
+    const deleteVideoFromCloudinary = await deleteVideoOnCloudinary(video.videoFile)
+
+    if (!deleteVideoFromCloudinary) {
+        throw new ApiError(500, "Error while deleting video from Cloudinary")
+    }
+
+
+
     return res.status(200).json(
-        new ApiError(
+        new ApiResponse(
             200, 
             {}, 
             "video deleted successfully"
