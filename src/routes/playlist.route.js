@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
     createPlaylist,
+    getPlaylistById,
 
 } from "../controllers/playlist.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -13,6 +14,10 @@ router.use(verifyJwt); // Apply verifyJWT middleware to all routes in this file
 
 
 router.route("/").post(createPlaylist)
+
+router
+    .route("/:playlistId")
+    .get(getPlaylistById)
 
 
 
