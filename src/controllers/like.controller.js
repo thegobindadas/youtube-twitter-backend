@@ -94,10 +94,55 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 
 
 
+const toggleTweetLike = asyncHandler(async (req, res) => {
+    
+    const { tweetId } = req.params
+    const userId = req.user._id;
+
+
+    const existingLike = await Like.findOne({
+        tweet: tweetId,
+        likedBy: userId
+    });
+
+
+    if (existingLike) {
+
+        await existingLike.remove();
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                {},
+                "Unliked the tweet"
+            )
+        )
+
+    } else {
+
+        const newLike = await Like.create({
+            tweet: tweetId,
+            likedBy: userId
+        });
+        
+
+        return res.status(200).json(
+            new ApiResponse(
+                200,
+                newLike,
+                "Liked the tweet"
+            )
+        )
+    }
+})
+
+
+
 
 
 export {
     toggleVideoLike,
     toggleCommentLike,
+    toggleTweetLike,
     
 }
