@@ -136,7 +136,7 @@ const deleteTweet = asyncHandler(async (req, res) => {
     }
 
     
-    await tweet.remove();
+    await tweet.deleteOne();
 
 
     return res.status(200).json(
