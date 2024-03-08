@@ -3,7 +3,7 @@ import {
     getVideoComments,
     addComment,
     updateComment,
-
+    deleteComment
 } from "../controllers/comment.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 
@@ -23,8 +23,9 @@ router
 
 router
     .route("/c/:commentId")
+    .delete(deleteComment)
     .patch(updateComment);
-
+    
 
 
 
