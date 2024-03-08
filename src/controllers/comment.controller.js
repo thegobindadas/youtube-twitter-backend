@@ -34,9 +34,38 @@ const getVideoComments = asyncHandler(async (req, res) => {
 
 
 
+const addComment = asyncHandler(async (req, res) => {
+    // TODO: add a comment to a video
+    const { content, videoId } = req.body;
+    const ownerId = req.user._id;
+
+    
+    const comment = Comment.create({
+        content,
+        video: videoId,
+        owner: ownerId
+    });
+
+    if (!comment) {
+        throw new ApiError(500, "Something went wrong while saving the comment")
+    }
+
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            comment,
+            "Comment added successfully"
+        )
+    )
+})
+
+
+
 
 
 export {
     getVideoComments,
+    addComment,
     
 }
