@@ -31,3 +31,12 @@ const getVideoComments = asyncHandler(async (req, res) => {
     )
 
 })
+
+
+
+
+
+export {
+    getVideoComments,
+    
+}
