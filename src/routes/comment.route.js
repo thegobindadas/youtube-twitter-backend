@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { 
     getVideoComments,
+    addComment,
 
 } from "../controllers/comment.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -17,7 +18,7 @@ router.use(verifyJwt); // Apply verifyJWT middleware to all routes in this file
 router
     .route("/:videoId")
     .get(getVideoComments)
-
+    .post(addComment);
 
 
 
