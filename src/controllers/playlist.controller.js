@@ -176,10 +176,15 @@ const updatePlaylist = asyncHandler(async (req, res) => {
     const { name, description } = req.body
     
 
-    const playlist = await Playlist.findByIdAndDelete(playlistId)
+    const playlist = await Playlist.findById(playlistId)
 
     if (!playlist) {
         throw new ApiError(404, "Playlist not found")
+    }
+
+
+    if (playlist.owner.toString() !== req.user._id.toString()) {
+        throw new ApiError(403, "unauthorized to update the playlist")
     }
 
 
