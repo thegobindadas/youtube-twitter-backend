@@ -118,6 +118,11 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
     }
 
 
+    if (playlist.owner.toString() !== req.user._id.toString()) {
+        throw new ApiError(403, "Unauthorized to remove video from playlist")
+    }
+
+
     playlist.videos = playlist.videos.filter(id => id.toString() !== videoId);
     await playlist.save({ validateBeforeSave: false });
 
