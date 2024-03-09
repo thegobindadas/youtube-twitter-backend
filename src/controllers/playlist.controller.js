@@ -211,6 +211,33 @@ const updatePlaylist = asyncHandler(async (req, res) => {
 
 
 
+const getUserPlaylists = asyncHandler(async (req, res) => {
+    // get user playlists
+    const { userId } = req.params
+
+    if (!userId) {
+        throw new ApiError(400, "user-id is required")
+    }
+    
+
+    const userPlaylists = await Playlist.find({ owner: userId });
+
+    if (!userPlaylists) {
+        throw new ApiError(404, "No playlist found from this user")
+    }
+    
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            userPlaylists,
+            "Get user playlists"
+        )
+    )
+})
+
+
+
 
 
 export {
@@ -219,5 +246,6 @@ export {
     addVideoToPlaylist,
     removeVideoFromPlaylist,
     deletePlaylist,
-    updatePlaylist
+    updatePlaylist,
+    getUserPlaylists
 }
