@@ -78,6 +78,14 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
     }
 
 
+    const video = await Video.findById(videoId)
+
+
+    if (playlist.owner.toString() !== req.user._id.toString() || video.owner.toString() !== req.user._id.toString()) {
+        throw new ApiError(403, "Unauthorized to add video to playlist")
+    }
+
+
     playlist.videos.push(videoId);
     await playlist.save({ validateBeforeSave: false });
 
