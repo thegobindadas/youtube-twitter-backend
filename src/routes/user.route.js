@@ -11,7 +11,8 @@ import {
     updateUserCoverImage,
     getUserChannelProfile,
     getWatchHistory,
-    forgotPassword
+    forgotPassword,
+    resetPassword
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -51,7 +52,7 @@ router.route("/c/:username").get(verifyJwt, getUserChannelProfile)
 router.route("/history").get(verifyJwt, getWatchHistory)
 
 router.post("/password/forgot-password", forgotPassword)
-
+router.post("/password/reset/:token", resetPassword)
 
 
 
