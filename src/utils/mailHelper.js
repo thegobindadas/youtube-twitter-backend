@@ -12,3 +12,24 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_MAIL_PASSWORD,
   },
 });
+
+
+
+const mailHelper = async (option) => {
+
+    const message = {
+        from: process.env.SMTP_SENDER_EMAIL,
+        to: option.email,
+        subject: option.subject,
+        text: option.message
+    }
+
+    await transporter.sendMail(message)
+
+}
+
+
+
+
+
+export default mailHelper
