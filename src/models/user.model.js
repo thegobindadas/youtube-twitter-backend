@@ -99,4 +99,24 @@ userSchema.methods.generateRefreshToken = function() {
 }
 
 
+
+// generate forgot password token
+userSchema.methods.generateForgotPasswordToken = async function() {
+    
+    const forgotToken = await crypto.randomBytes(20).toString("hex")
+
+
+    this.forgotPasswordToken = await crypto
+    .createHash("sha256")
+    .update(forgotToken)
+    .digest("hex")
+
+    this.forgotPasswordTokenExpiry = Date.now() + 20 * 60 * 1000
+
+
+    return forgotToken
+}
+
+
+
 export const User = mongoose.model("User", userSchema)
