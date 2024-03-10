@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 
 const userSchema = new Schema(
@@ -97,7 +98,6 @@ userSchema.methods.generateRefreshToken = function() {
         }
     )
 }
-
 
 
 // generate forgot password token
