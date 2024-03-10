@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
+import mailHelper from "../utils/mailHelper.js";
 
 
 
@@ -552,6 +553,60 @@ const getWatchHistory = asyncHandler(async (req, res) => {
 
 
 
+const forgotPassword = asyncHandler(async (req, res) => {
+
+    const { email } = req.body
+
+    if (!email) {
+        throw new ApiError(401, "Email is required!")
+    }
+
+
+    const user = await User.findOne({email})
+
+    if (!user) {
+        throw(404, "user not found")
+    }
+
+
+    const resetForgotPasswordToken = user.generateForgotPasswordToken()
+
+    user.save({ validateBeforeSave: false })
+
+
+    const resetPasswordUrl = `${req.protocol}://${req.get("host")}/api/v1/users/password/reset/${resetForgotPasswordToken}`
+
+    const message = `Your password reset token is as follows \n\n ${resetPasswordUrl} \n\n if this was not requested by you, please ignore.`
+
+    try {
+        
+        await mailHelper({
+        email: user.email,
+        subject: "passwword reset mail",
+        message
+        })
+
+    } catch (error) {
+        
+        user.forgotPasswordToken = undefined
+        user.forgotPasswordTokenExpiry = undefined
+
+        await user.save({ validateBeforeSave: false })
+
+
+        throw new ApiError(500, error?.message || "Email could not be sent")
+    }
+
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200, {}, "Send passwword reset mail")
+    )
+})
+
+
+
 
 
 
@@ -566,5 +621,6 @@ export {
     updateUserAvatar,
     updateUserCoverImage,
     getUserChannelProfile,
-    getWatchHistory
+    getWatchHistory,
+    forgotPassword
 }
