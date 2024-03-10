@@ -5,6 +5,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 import mailHelper from "../utils/mailHelper.js";
+import crypto from "crypto";
 
 
 
@@ -607,6 +608,68 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
 
 
+const resetPassword = asyncHandler(async (req, res) => {
+
+    const { token: resetToken } = req.params
+    const { password, confirmPassword } = req.body
+
+    const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex")
+
+
+    const user = await User.findOne({
+        forgotPasswordToken: resetPasswordToken,
+        forgotPasswordTokenExpiry: { $gt: Date.now() }
+    })
+
+
+    if(!user){
+        throw new ApiError(400, "password reset token in invalid or expired")
+    }
+
+
+    if (password !== confirmPassword) {
+        throw new ApiError(400, "password does not match")
+    }
+
+
+    user.password = password
+    user.forgotPasswordToken = undefined
+    user.forgotPasswordTokenExpiry = undefined
+
+    await user.save()
+
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id)
+
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+ 
+
+    return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+        new ApiResponse(
+            200,
+        {
+            user,
+            accessToken,
+            refreshToken
+        },
+        "Reset password successfully"
+        )
+    )
+})
+
+
+
 
 
 
@@ -622,5 +685,6 @@ export {
     updateUserCoverImage,
     getUserChannelProfile,
     getWatchHistory,
-    forgotPassword
+    forgotPassword,
+    resetPassword
 }
