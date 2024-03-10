@@ -45,7 +45,9 @@ const userSchema = new Schema(
         },
         refreshToken: {
             type: String
-        }
+        },
+        forgotPasswordToken: String,
+        forgotPasswordTokenExpiry: Date
     },
     {
         timestamps: true
