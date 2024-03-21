@@ -354,6 +354,23 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     }
 
 
+    const user = await User.findById(req.user?._id).select("-password")
+
+    if (!user) {
+        throw new ApiError(404, "User not found")
+    }
+
+
+    const previousAvatarLink = user.avatar
+
+
+    user.avatar =  avatar.url;
+    await user.save({ validateBeforeSave: false })
+
+
+    await deletePhotoOnCloudinary(previousAvatarLink)
+
+    /*
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
@@ -365,6 +382,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
             new: true
         }
     ).select("-password")
+    */
 
 
     return res
