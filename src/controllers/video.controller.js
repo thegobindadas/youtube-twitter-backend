@@ -135,8 +135,13 @@ const updateVideo = asyncHandler(async (req, res) => {
         }
     
         if (thumbnailLocalPath) {
+            const previouThumbnailLink = video.thumbnail
+            
             const thumbnail = await uploadOnCloudinary(thumbnailLocalPath)
             video.thumbnail = thumbnail.url;
+
+
+            await deletePhotoOnCloudinary(previouThumbnailLink)
         }
     
         await video.save({ validateBeforeSave: false });
