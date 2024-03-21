@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary, deletePhotoOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
 import mailHelper from "../utils/mailHelper.js";
 import crypto from "crypto";
@@ -413,6 +413,23 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     }
 
 
+    const user = await User.findById(req.user?._id).select("-password")
+
+    if (!user) {
+        throw new ApiError(404, "User not found")
+    }
+
+
+    const previousCoverImageLink = user.coverImage
+
+
+    user.coverImage =  coverImage.url;
+    await user.save({ validateBeforeSave: false })
+
+
+    await deletePhotoOnCloudinary(previousCoverImageLink)
+
+    /*
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
@@ -424,6 +441,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
             new: true
         }
     ).select("-password")
+    */
 
 
     return res
